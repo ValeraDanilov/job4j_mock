@@ -52,7 +52,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="category: ${categories}">
+                <tr th:each="category, iterStat : ${categories}">
                     <td>
                         <div>
                             <span>
@@ -74,21 +74,23 @@
                             <span class="fw-bold" th:text="${category.total}"></span>
                             <span class="mr-3">Тем : </span>
                             <span class="fw-bold" th:text="${category.topicsSize}"></span>
-                            <span th:if="${canManage}" > |
+                            <span th:if="${canManage}"> |
                                 <span class="mr-3">Позиция : </span>
                                 <span class="fw-bold" th:text="${category.position}"></span>
                             </span>
                         </small>
                     </td>
                     <td>
-                        <span class="badge bg-success">Новых: 100</span>
+                        <span class="badge bg-success" th:text="${count_new_interviews[iterStat.index]}"></span>
                     </td>
                     <td th:if="${userDTO != null}">
-                        <a class="text-decoration-none text-dark" th:if="${!userDTO.subscribeCategoryIds.contains(category.id)}"
+                        <a class="text-decoration-none text-dark"
+                           th:if="${!userDTO.subscribeCategoryIds.contains(category.id)}"
                            th:href="@{|/notification/subscribeCategory/${userInfo.id}/${category.id}|}">
                             <i class="far fa-bell" title="Подписаться на категорию"></i>
                         </a>
-                        <a class="text-decoration-none text-dark" th:if="${userDTO.subscribeCategoryIds.contains(category.id)}"
+                        <a class="text-decoration-none text-dark"
+                           th:if="${userDTO.subscribeCategoryIds.contains(category.id)}"
                            th:href="@{|/notification/unSubscribeCategory/${userInfo.id}/${category.id}|}">
                             <i class="fa-regular fa-bell-slash"
                                title="Вы подписаны на категорию"></i>

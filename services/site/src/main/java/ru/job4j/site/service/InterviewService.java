@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import ru.job4j.site.domain.StatusInterview;
 import ru.job4j.site.domain.StatusWisher;
-import ru.job4j.site.dto.InterviewDTO;
-import ru.job4j.site.dto.UserInfoDTO;
-import ru.job4j.site.dto.WisherDetailDTO;
-import ru.job4j.site.dto.WisherDto;
+import ru.job4j.site.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,5 +91,32 @@ public class InterviewService {
             }
         }
         return wishersDetail;
+    }
+
+
+    public List<Integer> countNewInterviews(List<ProfileDTO> profiles, List<CategoryDTO> categories, TopicsService topicsService, InterviewsService interviewsService) throws JsonProcessingException {
+        List<Integer> countNewInterview = new ArrayList<>();
+
+        for (CategoryDTO categoryDTO : categories) {
+            var getAllTopics = topicsService.getByCategory(categoryDTO.getId());
+            int count = 0;
+
+            for (ProfileDTO profileDTO : profiles) {
+                List<InterviewDTO> interviewsList = interviewsService.getByType(profileDTO.getId());
+
+                count += (int) getAllTopics.stream()
+                        .filter(topicDTO -> isNewTopic(interviewsList, topicDTO))
+                        .count();
+            }
+
+            countNewInterview.add(count);
+        }
+
+        return countNewInterview;
+    }
+
+    private boolean isNewTopic(List<InterviewDTO> interviewsList, TopicDTO topicDTO) {
+        return interviewsList.stream()
+                .anyMatch(interviewDTO -> topicDTO.getName().equals(interviewDTO.getTitle()));
     }
 }

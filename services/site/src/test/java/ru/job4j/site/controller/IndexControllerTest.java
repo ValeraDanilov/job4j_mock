@@ -50,19 +50,21 @@ class IndexControllerTest {
     private NotificationService notificationService;
     @MockBean
     private ProfilesService profilesService;
+    @MockBean
+    InterviewService interviewService;
     private IndexController indexController;
 
     @BeforeEach
     void initTest() {
         this.indexController = new IndexController(
-                categoriesService, interviewsService, authService, notificationService, profilesService
+                categoriesService, interviewsService, authService, notificationService, profilesService, topicsService, interviewService
         );
     }
 
     @Test
     void whenGetIndexPageThenReturnIndex() throws Exception {
         this.mockMvc.perform(get("/"))
-                
+
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"));
     }

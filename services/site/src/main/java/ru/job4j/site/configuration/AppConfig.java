@@ -1,6 +1,6 @@
 package ru.job4j.site.configuration;
 
-import handler.RestTemplateResponseErrorHandler;
+import ru.job4j.site.handler.RestTemplateResponseErrorHandler;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

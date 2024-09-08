@@ -1,4 +1,4 @@
-package handler;
+package ru.job4j.site.handler;
 
 
 import org.springframework.http.HttpStatus;

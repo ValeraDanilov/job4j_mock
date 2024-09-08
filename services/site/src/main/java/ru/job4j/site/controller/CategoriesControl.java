@@ -43,10 +43,7 @@ public class CategoriesControl {
                     "Категории", "/categories/"
             );
 
-            var getAllProfiles = this.profilesService.getAllProfile();
-            var getAllCategories = this.categoriesService.getAll();
-
-            List<Integer> countNewInterview = interviewService.countNewInterviews(getAllProfiles, getAllCategories, this.topicsService, this.interviewsService);
+            List<Integer> countNewInterview = interviewService.countNewInterviews(this.categoriesService, this.topicsService, this.interviewsService);
 
             model.addAttribute("count_new_interviews", countNewInterview);
 

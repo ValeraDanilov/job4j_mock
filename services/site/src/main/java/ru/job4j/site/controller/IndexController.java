@@ -60,11 +60,7 @@ public class IndexController {
                 .map(Optional::get)
                 .collect(Collectors.toSet());
 
-
-        var getAllProfiles = profilesService.getAllProfile();
-        var getAllCategories = categoriesService.getAll();
-
-        List<Integer> countNewInterview = interviewService.countNewInterviews(getAllProfiles, getAllCategories, topicsService, interviewsService);
+        List<Integer> countNewInterview = interviewService.countNewInterviews(this.categoriesService, topicsService, interviewsService);
 
         model.addAttribute("count_new_interviews", countNewInterview);
         model.addAttribute("new_interviews", interviewDTOList);

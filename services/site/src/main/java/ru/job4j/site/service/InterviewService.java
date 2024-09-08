@@ -93,30 +93,19 @@ public class InterviewService {
         return wishersDetail;
     }
 
-
-    public List<Integer> countNewInterviews(List<ProfileDTO> profiles, List<CategoryDTO> categories, TopicsService topicsService, InterviewsService interviewsService) throws JsonProcessingException {
+    public List<Integer> countNewInterviews(CategoriesService categoriesService, TopicsService topicsService, InterviewsService interviewsService) throws JsonProcessingException {
         List<Integer> countNewInterview = new ArrayList<>();
-
-        for (CategoryDTO categoryDTO : categories) {
-            var getAllTopics = topicsService.getByCategory(categoryDTO.getId());
+        for (CategoryDTO categoryDTO : categoriesService.getAll()) {
+            var getAllInterviews = interviewsService.findAll();
             int count = 0;
-
-            for (ProfileDTO profileDTO : profiles) {
-                List<InterviewDTO> interviewsList = interviewsService.getByType(profileDTO.getId());
-
-                count += (int) getAllTopics.stream()
-                        .filter(topicDTO -> isNewTopic(interviewsList, topicDTO))
-                        .count();
+            for (InterviewDTO interviewDTO : getAllInterviews) {
+                if (topicsService.getByCategory(categoryDTO.getId())
+                        .stream().anyMatch(a -> a.getName().equals(interviewDTO.getTitle()))) {
+                    count++;
+                }
             }
-
             countNewInterview.add(count);
         }
-
         return countNewInterview;
-    }
-
-    private boolean isNewTopic(List<InterviewDTO> interviewsList, TopicDTO topicDTO) {
-        return interviewsList.stream()
-                .anyMatch(interviewDTO -> topicDTO.getName().equals(interviewDTO.getTitle()));
     }
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.job4j.site.dto.InterviewDTO;
+import ru.job4j.site.util.InterviewResponse;
 import ru.job4j.site.util.RestPageImpl;
 
 import java.util.Collection;
@@ -33,6 +34,13 @@ public class InterviewsService {
         var mapper = new ObjectMapper();
         return mapper.readValue(text, new TypeReference<>() {
         });
+    }
+
+    public List<InterviewDTO> findAll() throws JsonProcessingException {
+        String text = new RestAuthCall("http://localhost:9912/interviews/").get();
+        ObjectMapper mapper = new ObjectMapper();
+        InterviewResponse response = mapper.readValue(text, InterviewResponse.class);
+        return response.getContent();
     }
 
     public Page<InterviewDTO> getByTopicId(int topicId, int page, int size)

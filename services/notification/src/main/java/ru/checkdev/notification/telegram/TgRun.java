@@ -24,7 +24,6 @@ import java.util.Map;
  * @author Dmitry Stepanov, user Dmitry
  * @since 12.09.2023
  */
-@Component
 @Slf4j
 public class TgRun {
     private final TgAuthCallWebClint tgAuthCallWebClint;

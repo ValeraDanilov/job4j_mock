@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.checkdev.auth.domain.Profile;
 import ru.checkdev.auth.repository.PersonRepository;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,8 @@ public class PersonServiceTest {
     public void whenRegPersonRolesThenDropRoles() {
         Profile profile = new Profile("Петр Арсентьев", "parsentev@yandex.ru", "password");
         profile.setKey("test");
+        profile.setCreated(Calendar.getInstance());
+        profile.setUpdated(Calendar.getInstance());
         this.persons.save(profile);
     }
 

@@ -64,6 +64,6 @@ public class FilterRepositoryTest {
     @Test
     public void whenTryToDeleteFilterByIncorrectUserId() {
         entityManager.createQuery("delete from interview").executeUpdate();
-        assertThat(Optional.of(0)).isEqualTo(filterRepository.deleteByUserId(1));
+        assertThat(Optional.of(0).get()).isEqualTo(filterRepository.deleteByUserId(1));
     }
 }

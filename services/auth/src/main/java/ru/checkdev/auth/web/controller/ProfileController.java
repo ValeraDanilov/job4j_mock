@@ -3,10 +3,9 @@ package ru.checkdev.auth.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.checkdev.auth.domain.Profile;
 import ru.checkdev.auth.dto.ProfileDTO;
 import ru.checkdev.auth.service.ProfileService;
 
@@ -54,5 +53,39 @@ public class ProfileController {
         return new ResponseEntity<>(
                 profiles,
                 profiles.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
+    }
+
+    /**
+     * Обрабатывает get запрос на получение списка профилей пользователя по запрошенному ID чата.
+     *
+     * @param id ID Telegram chat
+     * @return ResponseEntity
+     */
+    @GetMapping("chat/{id}")
+    public ResponseEntity<List<ProfileDTO>> getProfileByChatId(@PathVariable Long id) {
+        var profiles = profileService.findProfilesByChatId(id);
+        return new ResponseEntity<>(
+                profiles,
+                profiles.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
+    }
+
+
+    /**
+     * Обрабатывает post запрос на привязку или отвязку профиля от ресурса Mock.
+     *
+     * @param profile
+     * @return ResponseEntity
+     */
+    @PostMapping("/bindAndUnbind")
+    public ResponseEntity<ProfileDTO> getProfileByLoginAndPasswordAndUpdateBind(@RequestBody Profile profile) {
+        ProfileDTO findProfile = this.profileService.update(profile);
+        var uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(profile.getId())
+                .toUri();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .location(uri)
+                .body(findProfile);
     }
 }

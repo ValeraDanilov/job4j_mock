@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import ru.checkdev.auth.domain.Profile;
 import ru.checkdev.auth.domain.Photo;
 import ru.checkdev.auth.dto.ProfileDTO;
@@ -20,11 +21,14 @@ public interface PersonRepository extends CrudRepository<Profile, Integer> {
 
     Profile findByEmail(String email);
 
-    Profile findByEmailAndUsername(String email, String username);
-
     Profile findByKey(String key);
 
     List<Profile> findByKeyIn(List<String> key);
+
+    @Transactional
+    @Modifying
+    @Query("update profile p set p.bind = :bind where p.id = :id")
+    int updateBind(@Param("id") int id, @Param("bind") boolean bind);
 
     @Modifying
     @Query("update profile p set p.username = ?1, p.password = ?2, p.experience = ?3, p.about = ?4, p.aboutShort = ?5, p.show = ?6, p.salary=?7,  p.location=?8 where p.email = ?9")
@@ -60,7 +64,7 @@ public interface PersonRepository extends CrudRepository<Profile, Integer> {
      * @param id int person id
      * @return ProfileDTO
      */
-    @Query("SELECT new ru.checkdev.auth.dto.ProfileDTO(p.id, p.username, p.experience, p.photo.id, p.updated, p.created) FROM profile p WHERE p.id = :id")
+    @Query("SELECT new ru.checkdev.auth.dto.ProfileDTO(p.username, p.email) FROM profile p WHERE p.id = :id")
     ProfileDTO findProfileById(@Param("id") int id);
 
     /**
@@ -70,6 +74,26 @@ public interface PersonRepository extends CrudRepository<Profile, Integer> {
      *
      * @return List ProfileDTO
      */
-    @Query("SELECT new ru.checkdev.auth.dto.ProfileDTO(p.id, p.username, p.experience, p.photo.id, p.updated, p.created) FROM profile p ORDER BY p.created DESC")
+    @Query("SELECT new ru.checkdev.auth.dto.ProfileDTO(p.id, p.username, p.password, p.email, p.experience, p.photo.id, p.updated, p.created, p.tgChatId, p.bind) FROM profile p ORDER BY p.created DESC")
     List<ProfileDTO> findProfileOrderByCreatedDesc();
+
+    /**
+     * Метод нативным запросом ищет пользователя по Telegram chat ID,
+     * возвращая список DTO моделей ProfileDTO
+     *
+     * @param chatId long telegram chat id
+     * @return List ProfileDTO
+     */
+    @Query("SELECT new ru.checkdev.auth.dto.ProfileDTO(p.username, p.email) FROM profile p WHERE p.tgChatId = :chatId")
+    List<ProfileDTO> getProfileByChatId(@Param("chatId") Long chatId);
+
+    /**
+     * Метод нативным запросом ищет пользователей по email,
+     * возвращая DTO модель ProfileDTO
+     *
+     * @param email String person email
+     * @return ProfileDTO
+     */
+    @Query("SELECT new ru.checkdev.auth.dto.ProfileDTO(p.id, p.username, p.password, p.email, p.bind) FROM profile p WHERE p.email = :email")
+    ProfileDTO findProfileByLoginAndPassword(@Param("email") String email);
 }

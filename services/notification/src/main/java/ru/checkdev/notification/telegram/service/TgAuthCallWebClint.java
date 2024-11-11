@@ -7,6 +7,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.checkdev.notification.domain.PersonDTO;
 
+import java.util.List;
+
 /**
  * 3. Мидл
  * Класс реализует методы get и post для отправки сообщений через WebClient
@@ -27,14 +29,15 @@ public class TgAuthCallWebClint {
      * Метод get
      *
      * @param url URL http
-     * @return Mono<Person>
+     * @return Mono<List<PersonDTO>>
      */
-    public Mono<PersonDTO> doGet(String url) {
+    public Mono<List<PersonDTO>> doGet(String url) {
         return webClient
                 .get()
                 .uri(url)
                 .retrieve()
-                .bodyToMono(PersonDTO.class)
+                .bodyToFlux(PersonDTO.class)
+                .collectList()
                 .doOnError(err -> log.error("API not found: {}", err.getMessage()));
     }
 

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class PhotoServiceTest {
+class PhotoServiceTest {
     @Mock
     private PhotoRepository photoRepository;
     @InjectMocks
@@ -41,5 +41,4 @@ public class PhotoServiceTest {
         when(photoRepository.findById(10)).thenReturn(Optional.empty());
         assertThrows(NoSuchElementException.class, () -> photoService.findImage(10));
     }
-
 }

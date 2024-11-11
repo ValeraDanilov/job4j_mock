@@ -1,5 +1,6 @@
 package ru.checkdev.notification.domain;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 class PersonDTOTest {
 
@@ -22,38 +22,52 @@ class PersonDTOTest {
                 .setDate(2023, 10, 23)
                 .setTimeOfDay(20, 20, 20)
                 .build();
-        person = new PersonDTO("email", "password", true, roles, created);
+        person = new PersonDTO("username", "email", "password", true, roles, created, 0L, false);
     }
 
     @Test
-    public void testGetEmail() {
-        assertThat("email", is(person.getEmail()));
+    void testGetUsername() {
+        MatcherAssert.assertThat("username", is(person.getUsername()));
     }
 
     @Test
-    public void testGetPassword() {
-        assertThat("password", is(person.getPassword()));
+    void testGetEmail() {
+        MatcherAssert.assertThat("email", is(person.getEmail()));
     }
 
     @Test
-    public void testGetPrivacy() {
-        assertThat(true, is(person.isPrivacy()));
+    void testGetPassword() {
+        MatcherAssert.assertThat("password", is(person.getPassword()));
     }
 
     @Test
-    public void testGetRoles() {
+    void testGetPrivacy() {
+        MatcherAssert.assertThat(true, is(person.isPrivacy()));
+    }
+
+    @Test
+    void testGetRoles() {
         List<RoleDTO> roles = new ArrayList<>();
         roles.add(new RoleDTO(1));
-        assertThat(roles, is(person.getRoles()));
+        MatcherAssert.assertThat(roles, is(person.getRoles()));
     }
 
     @Test
-    public void testGetCreated() {
+    void testGetCreated() {
         Calendar created = new Calendar.Builder()
                 .setDate(2023, 10, 23)
                 .setTimeOfDay(20, 20, 20)
                 .build();
-        assertThat(created, is(person.getCreated()));
+        MatcherAssert.assertThat(created, is(person.getCreated()));
     }
 
+    @Test
+    void testGetTelegramChat() {
+        MatcherAssert.assertThat(0L, is(person.getTgChatId()));
+    }
+
+    @Test
+    void testGetBind() {
+        MatcherAssert.assertThat(false, is(person.isBind()));
+    }
 }

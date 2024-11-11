@@ -6,11 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.checkdev.notification.domain.PersonDTO;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -55,13 +57,14 @@ class TgAuthCallWebClintTest {
                 .set(Calendar.MONTH, Calendar.OCTOBER)
                 .set(Calendar.YEAR, 2023)
                 .build();
-        var personDto = new PersonDTO("mail", "password", true, Collections.EMPTY_LIST, created);
+        var personDto = new PersonDTO("username", "mail", "password", true, Collections.EMPTY_LIST, created, 0L, false);
+
         when(webClientMock.get()).thenReturn(requestHeadersUriMock);
         when(requestHeadersUriMock.uri("/person/" + personId)).thenReturn(requestHeadersMock);
         when(requestHeadersMock.retrieve()).thenReturn(responseMock);
-        when(responseMock.bodyToMono(PersonDTO.class)).thenReturn(Mono.just(personDto));
-        PersonDTO actual = tgAuthCallWebClint.doGet("/person/" + personId).block();
-        assertThat(actual).isEqualTo(personDto);
+        when(responseMock.bodyToFlux(PersonDTO.class)).thenReturn(Flux.just(personDto));
+        List<PersonDTO> actual = tgAuthCallWebClint.doGet("/person/" + personId).block();
+        assertThat(actual).asList().containsExactly(personDto);
     }
 
     @Test
@@ -70,7 +73,7 @@ class TgAuthCallWebClintTest {
         when(webClientMock.get()).thenReturn(requestHeadersUriMock);
         when(requestHeadersUriMock.uri("/person/" + personId)).thenReturn(requestHeadersMock);
         when(requestHeadersMock.retrieve()).thenReturn(responseMock);
-        when(responseMock.bodyToMono(PersonDTO.class)).thenReturn(Mono.error(new Throwable("Error")));
+        when(responseMock.bodyToFlux(PersonDTO.class)).thenReturn(Flux.error(new Throwable("Error")));
         assertThatThrownBy(() -> tgAuthCallWebClint.doGet("/person/" + personId).block())
                 .isInstanceOf(Throwable.class)
                 .hasMessageContaining("Error");
@@ -83,7 +86,7 @@ class TgAuthCallWebClintTest {
                 .set(Calendar.MONTH, Calendar.OCTOBER)
                 .set(Calendar.YEAR, 2023)
                 .build();
-        var personDto = new PersonDTO("mail", "password", true, null, created);
+        var personDto = new PersonDTO("username", "mail", "password", true, null, created, 0L, false);
         when(webClientMock.post()).thenReturn(requestBodyUriMock);
         when(requestBodyUriMock.uri("/person/created")).thenReturn(requestBodyMock);
         when(requestBodyMock.bodyValue(personDto)).thenReturn(requestHeadersMock);

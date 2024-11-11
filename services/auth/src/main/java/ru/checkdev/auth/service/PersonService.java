@@ -163,7 +163,7 @@ public class PersonService {
     @Transactional
     public void saveRole(Profile profile) {
         Profile load = this.persons.findById(profile.getId()).get();
-        List<Role> roles = new ArrayList<>();
+        Set<Role> roles = new HashSet<>();
         for (Role role : profile.getRoles()) {
             if (role != null) {
                 roles.add(role);

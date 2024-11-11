@@ -49,27 +49,29 @@ public class RegAction implements Action {
     @Override
     public BotApiMethod<Message> callback(Message message) {
         var chatId = message.getChatId().toString();
+        var id = message.getFrom().getId();
+        var username = message.getFrom().getUserName();
         var email = message.getText();
         var text = "";
         var sl = System.lineSeparator();
 
         if (!tgConfig.isEmail(email)) {
             text = "Email: " + email + " не корректный." + sl
-                   + "попробуйте снова." + sl
-                   + "/new";
+                    + "попробуйте снова." + sl
+                    + "/new";
             return new SendMessage(chatId, text);
         }
 
         var password = tgConfig.getPassword();
-        var person = new PersonDTO(email, password, true, null,
-                Calendar.getInstance());
+        var person = new PersonDTO(username, email, password, true, null,
+                Calendar.getInstance(), id, false);
         Object result;
         try {
             result = authCallWebClint.doPost(URL_AUTH_REGISTRATION, person).block();
         } catch (Exception e) {
             log.error("WebClient doPost error: {}", e.getMessage());
             text = "Сервис не доступен попробуйте позже" + sl
-                   + "/start";
+                    + "/start";
             return new SendMessage(chatId, text);
         }
 
@@ -81,9 +83,9 @@ public class RegAction implements Action {
         }
 
         text = "Вы зарегистрированы: " + sl
-               + "Логин: " + email + sl
-               + "Пароль: " + password + sl
-               + urlSiteAuth;
+                + "Логин: " + email + sl
+                + "Пароль: " + password + sl
+                + urlSiteAuth;
         return new SendMessage(chatId, text);
     }
 }

@@ -13,7 +13,6 @@ import static org.junit.Assert.*;
 public class SubscribeCategoryTest {
 
 
-
     @Test
     public void whenDefaultConstructorNotNull() {
         SubscribeCategory subscribeCategory = new SubscribeCategory();

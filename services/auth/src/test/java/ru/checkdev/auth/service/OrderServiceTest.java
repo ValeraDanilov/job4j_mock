@@ -58,5 +58,4 @@ class OrderServiceTest {
                 .thenReturn(List.of(ORDER_ONE, ORDER_TWO, ORDER_THREE));
         assertEquals(3, orderService.findByType("some text").size());
     }
-
 }

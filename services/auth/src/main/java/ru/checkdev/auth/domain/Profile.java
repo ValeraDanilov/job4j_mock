@@ -6,8 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author parsentev
@@ -27,6 +31,7 @@ public class Profile {
     @Column(unique = true)
     private String email;
 
+    @Column(name = "\"key\"")
     private String key;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -48,17 +53,13 @@ public class Profile {
     @JoinColumn(referencedColumnName = "id", name = "id_photo")
     private Photo photo;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "profile_role",
-            joinColumns = {
-                    @JoinColumn(name = "profile_id", nullable = false, updatable = false)
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "role_id", nullable = false, updatable = false)
-            }
+    @ManyToMany
+    @JoinTable(
+            name = "profile_role",
+            joinColumns = @JoinColumn(name = "profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
-
+    private Set<Role> roles = new HashSet<>();
     /**
      * Privacy sign.
      */
@@ -72,9 +73,20 @@ public class Profile {
 
     private String location;
 
+    @Column(nullable = false)
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Calendar updated;
 
+    @Column(nullable = false)
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Calendar created;
+
+    @Column
+    private Long tgChatId;
+
+    private boolean bind;
 
     public Profile() {
     }
@@ -84,6 +96,9 @@ public class Profile {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.created = Calendar.getInstance();
+        this.tgChatId = null;
+
     }
 
     public Profile(String username, String experience, String salary, String aboutShort, String about, String location) {
@@ -108,7 +123,7 @@ public class Profile {
     }
 
     public Profile(int id, String username, String email, String key, String password, boolean active, String experience,
-                   boolean show, String salary, String aboutShort, String about, Photo photo, boolean privacy, String location) {
+                   boolean show, String salary, String aboutShort, String about, Photo photo, boolean privacy, String location, boolean bind) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -123,6 +138,7 @@ public class Profile {
         this.photo = photo;
         this.privacy = privacy;
         this.location = location;
+        this.bind = bind;
     }
 
     public String getUsername() {
@@ -166,11 +182,11 @@ public class Profile {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
@@ -237,6 +253,23 @@ public class Profile {
     public void setUrlHh(String urlHh) {
         this.urlHh = urlHh;
     }
+
+    public long getTgChatId() {
+        return tgChatId;
+    }
+
+    public void setTgChatId(long tgChatId) {
+        this.tgChatId = tgChatId;
+    }
+
+    public boolean isBind() {
+        return bind;
+    }
+
+    public void setBind(boolean bind) {
+        this.bind = bind;
+    }
+
 
     /**
      * Return privacy sign.

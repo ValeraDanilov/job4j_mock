@@ -7,25 +7,14 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import ru.checkdev.notification.telegram.action.Action;
-import ru.checkdev.notification.telegram.action.InfoAction;
-import ru.checkdev.notification.telegram.action.RegAction;
+import ru.checkdev.notification.telegram.action.*;
 import ru.checkdev.notification.telegram.service.TgAuthCallWebClint;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * 3. Мидл
- * Инициализация телеграм бот,
- * username = берем из properties
- * token = берем из properties
- *
- * @author Dmitry Stepanov, user Dmitry
- * @since 12.09.2023
- */
-@Component
 @Slf4j
+@Component
 public class TgRun {
     private final TgAuthCallWebClint tgAuthCallWebClint;
     @Value("${tg.username}")
@@ -43,9 +32,19 @@ public class TgRun {
     public void initTg() {
         Map<String, Action> actionMap = Map.of(
                 "/start", new InfoAction(List.of(
-                        "/start", "/new")),
-                "/new", new RegAction(tgAuthCallWebClint, urlSiteAuth)
+                        """
+                        /start - Show the available commands
+                        /new - Register a new user
+                        /check - Show the full name and email address for this account
+                        /bind - Link Telegram to Mock using your username and password
+                        /unbind - Unlink Telegram from Mock using your credentials
+                        """)),
+                "/new", new RegAction(tgAuthCallWebClint, urlSiteAuth),
+                "/check", new CheckAction(tgAuthCallWebClint),
+                "/bind", new BindUnbindAction(tgAuthCallWebClint, "bind"),
+                "/unbind", new BindUnbindAction(tgAuthCallWebClint, "unbind")
         );
+
         try {
             BotMenu menu = new BotMenu(actionMap, username, token);
 

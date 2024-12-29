@@ -9,11 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>ru.job4j_mock</groupId>
+    <groupId>ru.checkdev</groupId>
     <artifactId>site</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>site</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -169,32 +168,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <finalName>site</finalName>
-                    <archive>
-                        <manifest>
-                            <mainClass>ru.ru.job4j_mock.site.SiteSrv</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
+
         </plugins>
     </build>
 
